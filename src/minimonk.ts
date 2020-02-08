@@ -19,8 +19,8 @@ export type Index = {
   [key: string]: 1 | -1 | "text";
 };
 
-export type OptionalId<TSchema> = Omit<TSchema, "_id"> & {
-  _id?: Document["_id"];
+export type OptionalId<TSchema extends Document> = Omit<TSchema, "_id"> & {
+  _id?: TSchema["_id"];
 };
 
 export type PageResult<TSchema> = {
