@@ -104,10 +104,10 @@ export class Collection<TSchema extends Document> {
   }
 
   findOne(
-    query: FilterQuery<TSchema>,
+    filter: FilterQuery<TSchema>,
     options?: FindOneOptions | string
   ): Promise<TSchema | null> {
-    return this.collection.findOne(query, options).then(doc => doc || null);
+    return this.collection.findOne(filter, options).then(doc => doc || null);
   }
 
   findById(
@@ -211,3 +211,5 @@ export class Collection<TSchema extends Document> {
       .then(doc => doc || null);
   }
 }
+
+export default (uri: string) => new Manager(uri);
