@@ -189,7 +189,7 @@ export class Collection<TSchema extends Document> {
 
   remove(
     filter: FilterQuery<TSchema>,
-    options?: CommonOptions & { multi: boolean }
+    options?: CommonOptions & { multi?: boolean }
   ): Promise<RemoveResult> {
     return this.collection.remove(filter, options);
   }
