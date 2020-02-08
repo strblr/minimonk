@@ -1,0 +1,19 @@
+{
+  "name": "minimonk",
+  "version": "1.0.0",
+  "description": "A tiny wrapper around monk",
+  "main": "lib/minimonk.js",
+  "types": "lib/minimonk.d.ts",
+  "repository": "git@github.com:ostrebler/minimonk.git",
+  "author": "ostrebler",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build"
+  },
+  "dependencies": {
+    "@types/mongodb": "^3.3.15",
+    "monk": "^7.1.2",
+    "typescript": "^3.7.5"
+  }
+}
