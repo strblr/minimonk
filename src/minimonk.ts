@@ -42,6 +42,8 @@ export type RemoveResult = {
   };
 };
 
+export { ObjectId };
+
 export function id(str: null): null;
 
 export function id(str: string): ObjectId;
