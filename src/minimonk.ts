@@ -1,5 +1,5 @@
 import monk, { ICollection, IMonkManager } from "monk";
-import { ObjectId } from "bson";
+import { ObjectID } from "bson";
 import {
   CommonOptions,
   FilterQuery,
@@ -11,7 +11,7 @@ import {
 } from "mongodb";
 
 export type Document = {
-  _id: ObjectId;
+  _id: ObjectID;
   [key: string]: any;
 };
 
@@ -42,15 +42,15 @@ export type RemoveResult = {
   };
 };
 
-export { ObjectId };
+export { ObjectID };
 
-export function id(str: null): null;
+export function idify(str?: null): null;
 
-export function id(str: string): ObjectId;
+export function idify(str: string): ObjectID;
 
-export function id(str: string | null): ObjectId | null {
-  return str && ObjectId.isValid(str)
-    ? ObjectId.createFromHexString(str)
+export function idify(str?: string | null): ObjectID | null {
+  return str && ObjectID.isValid(str)
+    ? ObjectID.createFromHexString(str)
     : null;
 }
 
@@ -88,7 +88,7 @@ export class Collection<TSchema extends Document> {
     return this.collection.count(filter, { limit: 1 }).then(count => !!count);
   }
 
-  existsById(id: string | ObjectId): Promise<boolean> {
+  existsById(id: string | ObjectID): Promise<boolean> {
     return this.collection
       .count({ _id: id }, { limit: 1 })
       .then(count => !!count);
@@ -113,7 +113,7 @@ export class Collection<TSchema extends Document> {
   }
 
   findById(
-    id: string | ObjectId,
+    id: string | ObjectID,
     options?: FindOneOptions | string
   ): Promise<TSchema | null> {
     return this.collection
@@ -179,7 +179,7 @@ export class Collection<TSchema extends Document> {
   }
 
   findByIdAndSet(
-    id: string | ObjectId,
+    id: string | ObjectID,
     $set: UpdateQuery<TSchema>["$set"],
     options?: FindOneAndUpdateOption | string
   ): Promise<TSchema | null> {
@@ -205,7 +205,7 @@ export class Collection<TSchema extends Document> {
   }
 
   findByIdAndDelete(
-    id: string | ObjectId,
+    id: string | ObjectID,
     options?: FindOneOptions | string
   ): Promise<TSchema | null> {
     return this.collection
