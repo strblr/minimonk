@@ -76,14 +76,14 @@ export class Collection<TSchema extends Document> {
   }
 
   count(
-    query: FilterQuery<TSchema>,
+    filter: FilterQuery<TSchema>,
     options?: MongoCountPreferences
   ): Promise<number> {
-    return this.collection.count(query, options);
+    return this.collection.count(filter, options);
   }
 
-  exists(query: FilterQuery<TSchema>): Promise<boolean> {
-    return this.collection.count(query, { limit: 1 }).then(count => !!count);
+  exists(filter: FilterQuery<TSchema>): Promise<boolean> {
+    return this.collection.count(filter, { limit: 1 }).then(count => !!count);
   }
 
   existsById(id: string | ObjectId): Promise<boolean> {
@@ -97,59 +97,60 @@ export class Collection<TSchema extends Document> {
   }
 
   find(
-    query: FilterQuery<TSchema>,
+    filter: FilterQuery<TSchema>,
     options?: FindOneOptions | string
   ): Promise<TSchema[]> {
-    return this.collection.find(query, options);
+    return this.collection.find(filter, options);
   }
 
-  async findOne(
+  findOne(
     query: FilterQuery<TSchema>,
     options?: FindOneOptions | string
   ): Promise<TSchema | null> {
-    const doc = await this.collection.findOne(query, options);
-    return doc || null;
+    return this.collection.findOne(query, options).then(doc => doc || null);
   }
 
-  async findById(
+  findById(
     id: string | ObjectId,
     options?: FindOneOptions | string
   ): Promise<TSchema | null> {
-    const doc = await this.collection.findOne({ _id: id }, options);
-    return doc || null;
+    return this.collection
+      .findOne({ _id: id }, options)
+      .then(doc => doc || null);
   }
 
-  async findLastOne(query: FilterQuery<TSchema>): Promise<TSchema | null> {
-    const doc = await this.collection.findOne(query, {
-      sort: { _id: -1 },
-      limit: 1
-    });
-    return doc || null;
+  findLastOne(filter: FilterQuery<TSchema>): Promise<TSchema | null> {
+    return this.collection
+      .findOne(filter, {
+        sort: { _id: -1 },
+        limit: 1
+      })
+      .then(doc => doc || null);
   }
 
   findAndMap<Key extends string>(
-    query: FilterQuery<TSchema>,
+    filter: FilterQuery<TSchema>,
     key: Key
   ): Promise<TSchema[Key][]> {
     return this.collection
-      .find(query, key)
+      .find(filter, key)
       .then(list => list.map(document => document[key]));
   }
 
   async findSmartPage(
-    query: FilterQuery<TSchema>,
+    filter: FilterQuery<TSchema>,
     search: string | null,
     sort: string | null,
     sortOrder: number | null,
     limit: number,
     page: number
   ): Promise<PageResult<TSchema>> {
-    const rootQuery = {
-      $and: [query, ...(search ? [{ $text: { $search: search } }] : [])]
+    const rootFilter = {
+      $and: [filter, ...(search ? [{ $text: { $search: search } }] : [])]
     };
     return {
-      total: await this.collection.count(rootQuery),
-      items: await this.collection.find(rootQuery, {
+      total: await this.collection.count(rootFilter),
+      items: await this.collection.find(rootFilter, {
         ...(sort && sortOrder && { sort: { [sort]: sortOrder } }),
         skip: (page - 1) * limit,
         limit
@@ -165,26 +166,24 @@ export class Collection<TSchema extends Document> {
     return this.collection.update(filter, update, options);
   }
 
-  async findOneAndUpdate(
+  findOneAndUpdate(
     filter: FilterQuery<TSchema>,
     update: UpdateQuery<TSchema> | TSchema,
     options?: FindOneAndUpdateOption | string
   ): Promise<TSchema | null> {
-    const doc = await this.collection.findOneAndUpdate(filter, update, options);
-    return doc || null;
+    return this.collection
+      .findOneAndUpdate(filter, update, options)
+      .then(doc => doc || null);
   }
 
-  async findByIdAndSet(
+  findByIdAndSet(
     id: string | ObjectId,
     $set: UpdateQuery<TSchema>["$set"],
     options?: FindOneAndUpdateOption | string
   ): Promise<TSchema | null> {
-    const doc = await this.collection.findOneAndUpdate(
-      { _id: id },
-      { $set },
-      options
-    );
-    return doc || null;
+    return this.collection
+      .findOneAndUpdate({ _id: id }, { $set }, options)
+      .then(doc => doc || null);
   }
 
   remove(
@@ -194,19 +193,21 @@ export class Collection<TSchema extends Document> {
     return this.collection.remove(filter, options);
   }
 
-  async findOneAndDelete(
+  findOneAndDelete(
     filter: FilterQuery<TSchema>,
     options?: FindOneOptions | string
   ): Promise<TSchema | null> {
-    const doc = await this.collection.findOneAndDelete(filter, options);
-    return doc || null;
+    return this.collection
+      .findOneAndDelete(filter, options)
+      .then(doc => doc || null);
   }
 
-  async findByIdAndDelete(
+  findByIdAndDelete(
     id: string | ObjectId,
     options?: FindOneOptions | string
   ): Promise<TSchema | null> {
-    const doc = await this.collection.findOneAndDelete({ _id: id }, options);
-    return doc || null;
+    return this.collection
+      .findOneAndDelete({ _id: id }, options)
+      .then(doc => doc || null);
   }
 }
