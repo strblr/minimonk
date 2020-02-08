@@ -44,11 +44,13 @@ export type RemoveResult = {
 
 export { ObjectID };
 
-export function idify(str?: null): null;
+export function idify(str: null | undefined): null;
 
 export function idify(str: string): ObjectID;
 
-export function idify(str?: string | null): ObjectID | null {
+export function idify(str: string | null | undefined): ObjectID | null;
+
+export function idify(str: string | null | undefined): ObjectID | null {
   return str && ObjectID.isValid(str)
     ? ObjectID.createFromHexString(str)
     : null;
