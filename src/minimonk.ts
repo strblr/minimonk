@@ -1,6 +1,7 @@
 import monk, { ICollection, IMonkManager } from "monk";
 import { ObjectID } from "bson";
 import {
+  CollectionInsertOneOptions,
   CommonOptions,
   FilterQuery,
   FindOneAndUpdateOption,
@@ -99,8 +100,19 @@ export class Collection<TSchema extends Document> {
       .then(count => !!count);
   }
 
-  insert(document: OptionalId<TSchema>): Promise<TSchema> {
-    return this.collection.insert(document);
+  insert(
+    document: OptionalId<TSchema>,
+    options?: CollectionInsertOneOptions
+  ): Promise<TSchema>;
+  insert(
+    documents: OptionalId<TSchema>[],
+    options?: CollectionInsertOneOptions
+  ): Promise<TSchema[]>;
+  insert(
+    document: OptionalId<TSchema> | OptionalId<TSchema>[],
+    options?: CollectionInsertOneOptions
+  ): Promise<TSchema | TSchema[]> {
+    return this.collection.insert(document, options);
   }
 
   find(
