@@ -146,9 +146,9 @@ export class Collection<TSchema extends Document> {
 
   async findSmartPage(
     filter: FilterQuery<TSchema>,
-    search: string | null,
-    sort: string | null,
-    sortOrder: number | null,
+    search: string | null | undefined,
+    sort: string | null | undefined,
+    sortOrder: number | null | undefined,
     limit: number,
     page: number
   ): Promise<PageResult<TSchema>> {
