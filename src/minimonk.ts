@@ -84,7 +84,7 @@ export class Collection<TSchema extends Document> {
   }
 
   count(
-    filter: FilterQuery<TSchema>,
+    filter?: FilterQuery<TSchema>,
     options?: MongoCountPreferences
   ): Promise<number> {
     return this.collection.count(filter, options);
