@@ -229,6 +229,10 @@ export class Collection<TSchema extends Document> {
       .findOneAndDelete({ _id: id }, options)
       .then(doc => doc || null);
   }
+
+  drop() {
+    return this.collection.drop();
+  }
 }
 
 export default (uri: string) => new Manager(uri);
