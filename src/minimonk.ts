@@ -55,9 +55,10 @@ export function idify(str: string | null | undefined): ObjectID | null {
   // Safeguard for the old behaviour, to remove after backend TS conversion is over
   if ((str as unknown) instanceof ObjectID) return (str as unknown) as ObjectID;
   // End safeguard
-  return str && ObjectID.isValid(str)
-    ? ObjectID.createFromHexString(str)
-    : null;
+  if (typeof str !== "string") return null;
+  if (!ObjectID.isValid(str))
+    throw new Error(`Invalid hex value <${str}> passed to idify`);
+  return ObjectID.createFromHexString(str);
 }
 
 export class Manager {
