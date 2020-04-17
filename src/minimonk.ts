@@ -1,6 +1,7 @@
 import monk, { ICollection, IMonkManager } from "monk";
 import { ObjectID } from "bson";
 import {
+  CollectionAggregationOptions,
   CollectionInsertOneOptions,
   CommonOptions,
   FilterQuery,
@@ -16,9 +17,7 @@ export type Document = {
   [key: string]: any;
 };
 
-export type Index = {
-  [key: string]: 1 | -1 | "text";
-};
+export type Index = Record<string, 1 | -1 | "text">;
 
 export type OptionalId<TSchema extends Document> = Omit<TSchema, "_id"> & {
   _id?: TSchema["_id"];
@@ -78,6 +77,13 @@ export class Collection<TSchema extends Document> {
 
   constructor(col: ICollection<TSchema>) {
     this.collection = col;
+  }
+
+  aggregate(
+    pipeline: object[],
+    options?: CollectionAggregationOptions
+  ): Promise<any> {
+    return this.collection.aggregate(pipeline, options);
   }
 
   createIndex(index: Index): Promise<string> {
