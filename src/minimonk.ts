@@ -1,5 +1,4 @@
 import monk, { ICollection, IMonkManager } from "monk";
-import { ObjectID } from "bson";
 import {
   CollectionAggregationOptions,
   CollectionInsertOneOptions,
@@ -8,12 +7,13 @@ import {
   FindOneAndUpdateOption,
   FindOneOptions,
   MongoCountPreferences,
+  ObjectId,
   UpdateOneOptions,
   UpdateQuery
 } from "mongodb";
 
 export type Document = {
-  _id: ObjectID;
+  _id: ObjectId;
   [key: string]: any;
 };
 
@@ -42,26 +42,26 @@ export type RemoveResult = {
   };
 };
 
-export { ObjectID };
+export { ObjectId, ObjectId as ObjectID };
 
 export function idify(str: null | undefined): null;
 
-export function idify(str: string): ObjectID;
+export function idify(str: string): ObjectId;
 
-export function idify(str: string | null | undefined): ObjectID | null;
+export function idify(str: string | null | undefined): ObjectId | null;
 
-export function idify(str: string | null | undefined): ObjectID | null {
+export function idify(str: string | null | undefined): ObjectId | null {
   // Safeguard for the old behaviour, to remove after backend TS conversion is over
-  if ((str as unknown) instanceof ObjectID) return (str as unknown) as ObjectID;
+  if ((str as unknown) instanceof ObjectId) return (str as unknown) as ObjectId;
   // End safeguard
   if (typeof str !== "string") return null;
-  if (!ObjectID.isValid(str))
+  if (!ObjectId.isValid(str))
     throw new Error(`Invalid hex value <${str}> passed to idify`);
-  return ObjectID.createFromHexString(str);
+  return ObjectId.createFromHexString(str);
 }
 
 export class Manager {
-  manager: IMonkManager;
+  manager: Promise<IMonkManager> & IMonkManager;
 
   constructor(uri: string) {
     this.manager = monk(uri);
@@ -101,7 +101,7 @@ export class Collection<TSchema extends Document> {
     return this.collection.count(filter, { limit: 1 }).then(count => !!count);
   }
 
-  existsById(id: string | ObjectID): Promise<boolean> {
+  existsById(id: string | ObjectId): Promise<boolean> {
     return this.collection
       .count({ _id: id }, { limit: 1 })
       .then(count => !!count);
@@ -137,7 +137,7 @@ export class Collection<TSchema extends Document> {
   }
 
   findById(
-    id: string | ObjectID,
+    id: string | ObjectId,
     options?: FindOneOptions | string
   ): Promise<TSchema | null> {
     return this.collection
@@ -203,7 +203,7 @@ export class Collection<TSchema extends Document> {
   }
 
   findByIdAndSet(
-    id: string | ObjectID,
+    id: string | ObjectId,
     $set: UpdateQuery<TSchema>["$set"],
     options?: FindOneAndUpdateOption | string
   ): Promise<TSchema | null> {
@@ -229,7 +229,7 @@ export class Collection<TSchema extends Document> {
   }
 
   findByIdAndDelete(
-    id: string | ObjectID,
+    id: string | ObjectId,
     options?: FindOneOptions | string
   ): Promise<TSchema | null> {
     return this.collection
